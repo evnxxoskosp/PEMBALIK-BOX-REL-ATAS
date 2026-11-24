@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Automatic Box Depalletizing & 180° Turning Machine — Interactive Engineering Simulator</title>
+<style>
+:root{--bg:#0b1220;--panel:#111c2d;--panel2:#17243a;--line:#293b55;--text:#e8eff8;--muted:#9aabc0;--cyan:#43c6d9;--blue:#4388e8;--green:#42ca8a;--amber:#f3b847;--red:#ef6262;--shadow:0 16px 44px rgba(0,0,0,.3)}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+#app{height:100%;display:grid;grid-template-rows:62px minmax(0,1fr) 31px;background:radial-gradient(circle at 25% 0%,#172944 0,#0b1220 58%)}
+header{display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid #24364f;background:rgba(9,16,28,.88);backdrop-filter:blur(12px);z-index:3}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(145deg,#1c82bd,#274a86);display:grid;place-items:center;font-weight:800;color:#fff;box-shadow:0 6px 18px #13648a55}.brand h1{font-size:14px;margin:0;font-weight:750;letter-spacing:.2px}.brand small{display:block;color:var(--muted);font-size:10px;margin-top:3px;letter-spacing:.6px}
+.header-right{display:flex;align-items:center;gap:8px}.pill{border:1px solid var(--line);background:#132238;color:#c6d4e6;border-radius:999px;padding:7px 10px;font-size:10px}.pill strong{color:#fff}.main{display:grid;grid-template-columns:minmax(0,1fr) 370px;min-height:0}.viewport{position:relative;min-width:0;min-height:0;overflow:hidden;background:radial-gradient(ellipse at 50% 38%,#1b2e48 0,#101d30 50%,#0a1423 100%)}#glcanvas{width:100%;height:100%;display:block;outline:none;cursor:grab}#glcanvas:active{cursor:grabbing}.view-hud{position:absolute;left:16px;top:14px;display:flex;gap:7px;flex-wrap:wrap;pointer-events:none}.hud-chip{background:rgba(6,14,26,.72);border:1px solid #314762;color:#d8e5f4;padding:7px 9px;border-radius:8px;font-size:10px;box-shadow:var(--shadow);backdrop-filter:blur(8px)}.view-actions{position:absolute;right:14px;top:14px;display:flex;gap:5px}.view-actions button{background:#14243a;border:1px solid #37506e;color:#d6e7fa;border-radius:7px;padding:7px 9px;font-size:10px;cursor:pointer}.view-actions button:hover{border-color:var(--cyan)}.hint{position:absolute;left:16px;bottom:14px;color:#a9bad0;font-size:10px;background:rgba(6,14,26,.65);padding:8px 10px;border:1px solid #2a405b;border-radius:8px;pointer-events:none}
+aside{background:rgba(12,21,35,.94);border-left:1px solid #263a54;overflow:auto;padding:12px;scrollbar-color:#3a526f #101c2c}.section{border:1px solid #293e59;border-radius:12px;background:linear-gradient(180deg,rgba(22,37,59,.94),rgba(15,28,46,.94));padding:12px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.12)}.section h2{font-size:11px;letter-spacing:.9px;text-transform:uppercase;color:#a9bfd7;margin:0 0 10px;font-weight:800}.mode-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}.mode-btn{border:1px solid #3b526f;background:#12233a;color:#b9c9dc;border-radius:8px;padding:9px;font-weight:700;font-size:11px;cursor:pointer}.mode-btn.active{background:linear-gradient(135deg,#176d9f,#2453a3);border-color:#4ba7d5;color:white;box-shadow:0 0 0 2px #358ec333}.controls{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.btn{border:1px solid #3b526f;background:#1a2c45;color:#e4eef9;border-radius:8px;padding:9px 8px;font-size:10px;font-weight:700;cursor:pointer;transition:.15s;min-height:34px}.btn:hover{border-color:#54b8d2;transform:translateY(-1px)}.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}.btn.primary{background:linear-gradient(135deg,#176e9e,#2259a6);border-color:#399dc1}.btn.green{background:linear-gradient(135deg,#176d56,#178b75);border-color:#38b994}.btn.amber{background:linear-gradient(135deg,#78551d,#a66a19);border-color:#d09a3b}.btn.red{background:linear-gradient(135deg,#7c252b,#a8333d);border-color:#d95a62}.btn.full{grid-column:1/-1}.control-label{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:#b9c9dc;margin:10px 1px 5px}.control-label b{color:white;font-variant-numeric:tabular-nums}.range{width:100%;accent-color:var(--cyan)}.jog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.jog-grid .btn{padding:8px 4px}.state-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.state{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:8px;background:#0e1c2e;border:1px solid #2a405b;font-size:10px;color:#bacadd}.state em{font-style:normal;font-weight:800;font-size:9px}.ok{color:#4bd19a}.bad{color:#ff7777}.warn{color:#ffc764}.metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.metric{background:#0c1929;border:1px solid #283c56;border-radius:9px;padding:9px}.metric label{display:block;color:#91a7c0;font-size:9px;text-transform:uppercase;letter-spacing:.7px}.metric strong{display:block;font-size:17px;margin-top:4px;font-variant-numeric:tabular-nums}.metric small{display:block;color:#839ab3;font-size:9px;margin-top:2px}.table{width:100%;border-collapse:collapse;font-size:10px}.table td{padding:6px 2px;border-bottom:1px solid #263a52;color:#b8c8da}.table td:last-child{text-align:right;color:#f3f7fc;font-weight:700;font-variant-numeric:tabular-nums}.table tr:last-child td{border-bottom:0}.notice{border-left:3px solid var(--amber);background:#352a18;color:#e7d1a3;padding:9px 10px;border-radius:5px;font-size:10px;line-height:1.45}.good-note{border-left:3px solid var(--green);background:#102c29;color:#b8e7d3;padding:9px 10px;border-radius:5px;font-size:10px;line-height:1.45}.log{height:105px;overflow:auto;background:#091321;border:1px solid #263b55;border-radius:8px;padding:8px;font:10px/1.55 Consolas,monospace;color:#a9bed5}.log div{border-bottom:1px dotted #253950;padding:2px 0}.tiny{font-size:9px;color:#8198b2;line-height:1.45}.sensor-toggle{display:flex;align-items:center;gap:7px}.sensor-toggle input{accent-color:var(--green)}footer{display:flex;align-items:center;justify-content:space-between;padding:0 13px;background:#08111e;border-top:1px solid #24364f;color:#8ea4bc;font-size:9px}footer strong{color:#d8e6f5}.status-light{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 8px currentColor}.modalback{position:fixed;inset:0;background:#020813bb;display:none;align-items:center;justify-content:center;z-index:20;padding:20px}.modal{max-width:760px;width:100%;max-height:85vh;overflow:auto;background:#132239;border:1px solid #3a5270;border-radius:14px;padding:18px;box-shadow:var(--shadow)}.modal h2{margin:0 0 12px}.modal p,.modal li{font-size:12px;line-height:1.55;color:#c1d0e0}.modal table{width:100%;border-collapse:collapse;font-size:11px}.modal td{padding:7px;border-bottom:1px solid #314763}.modal td:last-child{text-align:right;color:#f3f7fd}.modalclose{float:right}
+@media(max-width:1000px){.main{grid-template-columns:minmax(0,1fr) 330px}}@media(max-width:760px){#app{grid-template-rows:56px minmax(0,1fr) 28px}.main{grid-template-columns:1fr;grid-template-rows:minmax(260px,48vh) auto}.viewport{min-height:260px}aside{border-left:0;border-top:1px solid #263a54}.header-right .pill:nth-child(2){display:none}}
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+ <div class="brand"><div class="logo">BT</div><div><h1>AUTOMATIC BOX DEPALLETIZING & 180° TURNING MACHINE</h1><small>INTERACTIVE MECHANICAL CONCEPT • MM UNIT • REV 0.3</small></div></div>
+ <div class="header-right"><span class="pill">MODEL <strong>CONCEPT / NOT FOR FABRICATION</strong></span><span class="pill">SIMULATION <strong>LOCAL ONLY</strong></span></div>
+</header>
+<div class="main">
+ <section class="viewport">
+  <canvas id="glcanvas" tabindex="0"></canvas>
+  <div class="view-hud"><span class="hud-chip">3D ENGINEERING VIEW</span><span class="hud-chip" id="phaseChip">IDLE • HOME AT PALLET A</span><span class="hud-chip" id="coordChip">X −800 | Z 1,850 | R 180°</span></div>
+  <div class="view-actions"><button id="viewIso">ISO</button><button id="viewTop">TOP</button><button id="viewFront">FRONT</button><button id="fitView">FIT</button></div>
+  <div class="hint">Drag: orbit • Wheel: zoom • Right-drag: pan • Double-click: reset view</div>
+ </section>
+ <aside>
+  <div class="section">
+   <h2>Operating mode</h2>
+   <div class="mode-row"><button class="mode-btn active" id="autoMode">AUTO MODE</button><button class="mode-btn" id="manualMode">MANUAL MODE</button></div>
+   <div class="controls" style="margin-top:8px">
+    <button class="btn primary" id="startBtn">▶ START CYCLE</button><button class="btn amber" id="pauseBtn">Ⅱ PAUSE</button>
+    <button class="btn red" id="stopBtn">■ STOP</button><button class="btn" id="resetBtn">↺ RESET / HOME</button>
+   </div>
+   <div class="control-label"><span>Cycle progress</span><b id="cycleProgress">0%</b></div><div style="height:7px;background:#081522;border-radius:99px;overflow:hidden"><div id="progressBar" style="height:100%;width:0;background:linear-gradient(90deg,#27a2cf,#46d2a0);transition:width .1s"></div></div>
+   <p class="tiny" id="modeHelp">AUTO: menjalankan urutan pick → lift → transfer → rotate → place → return.</p>
+  </div>
+  <div class="section" id="manualPanel" style="display:none">
+   <h2>Manual jog controls</h2>
+   <div class="tiny">Tahan tombol untuk jog kontinu. Tombol hanya aktif bila guard tertutup dan E-stop reset.</div>
+   <div class="control-label"><span>X-axis • horizontal</span><b id="xVal">−800 mm</b></div>
+   <div class="jog-grid"><button class="btn" data-jog="x-">◀ X−</button><button class="btn" id="xHome">A INPUT</button><button class="btn" data-jog="x+">X+ ▶</button></div>
+   <div class="control-label"><span>Z-axis • vertical</span><b id="zVal">1,850 mm</b></div>
+   <div class="jog-grid"><span></span><button class="btn" data-jog="z+">▲ Z+</button><span></span><button class="btn" data-jog="z-">▼ Z−</button><button class="btn" id="zSafe">SAFE HEIGHT</button><span></span></div>
+   <div class="control-label"><span>R-axis • rotation</span><b id="rVal">180°</b></div>
+   <div class="jog-grid"><button class="btn" data-jog="r-">↶ R−</button><button class="btn" id="rHome">180° HOME</button><button class="btn" data-jog="r+">R+ ↷</button></div>
+   <div class="control-label"><span>Hook gripper</span><b id="gripVal">OPEN</b></div>
+   <div class="controls"><button class="btn amber" id="gripClose">CLOSE / PICK</button><button class="btn" id="gripOpen">OPEN / RELEASE</button></div>
+   <div class="controls" style="margin-top:7px"><button class="btn" id="goInput">GO INPUT</button><button class="btn" id="goOutput">GO OUTPUT</button></div>
+  </div>
+  <div class="section">
+   <h2>Live machine status</h2>
+   <div class="metric-grid">
+    <div class="metric"><label>Carriage X</label><strong id="mx">−800</strong><small>mm from center</small></div>
+    <div class="metric"><label>Lift Z</label><strong id="mz">1,850</strong><small>mm from floor</small></div>
+    <div class="metric"><label>Rotary angle</label><strong id="mr">180</strong><small>degrees • 180 = mouth down</small></div>
+    <div class="metric"><label>Boxes moved</label><strong id="moved">0</strong><small>completed cycles</small></div>
+   </div>
+   <div class="control-label"><span>Input pallet A</span><b id="inCount">5 / 5 boxes</b></div>
+   <div class="control-label"><span>Output pallet B</span><b id="outCount">0 / 5 boxes</b></div>
+   <div class="state-grid" style="margin-top:8px">
+    <div class="state"><span>Guard closed</span><em class="ok" id="guardState">YES</em></div>
+    <div class="state"><span>E-stop</span><em class="ok" id="estopState">RESET</em></div>
+    <div class="state"><span>Box at input</span><em class="ok" id="boxState">DETECTED</em></div>
+    <div class="state"><span>Gripper lock</span><em id="lockState" class="warn">OPEN</em></div>
+   </div>
+  </div>
+  <div class="section">
+   <h2>Safety & sensor simulation</h2>
+   <div class="state-grid">
+    <label class="state sensor-toggle"><input type="checkbox" id="guardCheck" checked> Guard closed</label>
+    <label class="state sensor-toggle"><input type="checkbox" id="palletCheck" checked> Output pallet present</label>
+   </div>
+   <div class="controls" style="margin-top:8px"><button class="btn red full" id="estopBtn">⚠ EMERGENCY STOP (SIM)</button></div>
+   <p class="tiny">E-stop menghentikan animasi. Tombol ini hanya simulasi logika HMI, bukan perangkat keselamatan fisik.</p>
+  </div>
+  <div class="section">
+   <h2>Design data • mm</h2>
+   <table class="table">
+    <tr><td>Box top overall length</td><td>725</td></tr><tr><td>Box body upper length</td><td>670</td></tr><tr><td>Box bottom length</td><td>655</td></tr><tr><td>Box width (single recorded)</td><td>420</td></tr><tr><td>Box height</td><td>230</td></tr><tr><td>Upper rim / kuping value</td><td>24*</td></tr><tr><td>Body wall thickness</td><td>4*</td></tr><tr><td>Pallet (assumed)</td><td>1200 × 1000 × 145*</td></tr><tr><td>Frame envelope (assumed)</td><td>3000 × 1900 × 2800*</td></tr><tr><td>Input/output center spacing*</td><td>1600</td></tr><tr><td>X travel (concept)</td><td>1600</td></tr><tr><td>Z working range (concept)</td><td>250–2100</td></tr>
+   </table>
+   <p class="tiny">*Asumsi konsep / perlu pengukuran dan validasi. Nilai 22 mm dari catatan lapangan belum dipetakan ke ketebalan dinding.</p>
+   <button class="btn full" id="openDesign">OPEN ENGINEERING NOTES & FABRICATION CHECKLIST</button>
+  </div>
+  <div class="section">
+   <h2>Event / alarm log</h2>
+   <div class="log" id="log"><div>[BOOT] 3D simulator ready.</div><div>[INFO] No PLC hardware connected.</div><div>[INFO] Initial state: 5 inverted boxes at pallet A.</div></div>
+   <div class="controls" style="margin-top:7px"><button class="btn" id="clearLog">CLEAR LOG</button><button class="btn" id="exportLog">EXPORT LOG .TXT</button></div>
+  </div>
+ </aside>
+</div>
+<footer><span><i class="status-light"></i><strong id="footerStatus">READY</strong> • INTERACTIVE VISUAL SIMULATOR ONLY — NO PLC CONNECTION</span><span>1 WORLD UNIT = 1 mm • REV 0.3 • CONCEPT DESIGN</span></footer>
+</div>
+<div class="modalback" id="modalBack"><div class="modal"><button class="btn modalclose" id="closeModal">CLOSE ✕</button><h2>Engineering notes & fabrication validation</h2><p><b>Important:</b> This is a detailed concept visualization, not an approved manufacturing design. The actual box geometry, loads, structure, actuator sizing, guarding and safety system must be validated before fabrication.</p><table><tr><td>Measured box data reported</td><td>725 top overall, 670 body upper, 655 bottom, 420 width, 230 height</td></tr><tr><td>Unresolved 22 mm measurement</td><td>Recorded as “tebal”; exact feature not confirmed</td></tr><tr><td>24 mm upper ear / rim</td><td>Recorded value; modeled as provisional rim feature. Confirm whether vertical thickness, horizontal projection, or another dimension.</td></tr><tr><td>Wall thickness in visual model</td><td>4 mm placeholder only; not confirmed measurement.</td></tr><tr><td>Pallet dimensions</td><td>1200 × 1000 × 145 mm assumed for visualization.</td></tr><tr><td>Machine frame envelope</td><td>3000 × 1900 × 2800 mm assumed.</td></tr><tr><td>Frame profiles</td><td>100×100×5 and 80×80×4 steel tube shown as visual placeholders; structural calculation required.</td></tr><tr><td>Hook engagement</td><td>Hook tip / engagement / clearance shown conceptually; measure actual under-rim gap and test rim strength.</td></tr><tr><td>Actuator / gearbox</td><td>Not sized. Need box mass, cradle mass, centre of gravity, speed, acceleration, duty cycle and safety factor.</td></tr><tr><td>Rotary shaft and bearings</td><td>Not sized. Calculate bending, torsion, deflection, bearing loads and fatigue.</td></tr><tr><td>PLC & controls</td><td>HMI sequence is simulated. No physical I/O mapping, PLC program or safety controller supplied.</td></tr><tr><td>Machine safety</td><td>Perform risk assessment; design guarding, interlocks, E-stop, safe load holding, limit protection and recovery procedure according to applicable standards.</td></tr></table><h3>Minimum data needed before fabrication</h3><ul><li>Measure actual box mass and confirm all box dimensions including upper/lower width, rim projection and clearance below rim.</li><li>Test the rim under a controlled proof load and inspect plastic deformation / cracking.</li><li>Measure actual pallet size, pallet height, stack gap, distance between pallet centres and available floor / overhead space.</li><li>Set target cycle time, number of boxes per pallet, duty cycle and operator replenishment workflow.</li><li>Calculate frame, rails, lifting drive, hook, shaft, bearing, gearbox, brake and fasteners.</li><li>Complete safety risk assessment and engineering review before machine build.</li></ul><p>CAD geometry is illustrative and dimensionally parameterized where data are known. Do not use the provisional dimensions as fabrication dimensions until field verification and calculations are complete.</p></div></div>
+<script>
+(()=>{
+'use strict';
+const canvas=document.getElementById('glcanvas'); const gl=canvas.getContext('webgl',{antialias:true,alpha:false,preserveDrawingBuffer:true});
+if(!gl){document.body.innerHTML='<div style="padding:40px;color:white">WebGL is not available in this browser. Please open this file in a recent Chrome or Edge browser with hardware acceleration enabled.</div>';return;}
+const vs=`attribute vec3 aPos; attribute vec3 aNormal; attribute vec3 aColor; uniform mat4 uModel; uniform mat4 uVP; uniform mat3 uNormal; varying vec3 vWorld; varying vec3 vN; varying vec3 vColor; void main(){vec4 w=uModel*vec4(aPos,1.0);vWorld=w.xyz;vN=normalize(uNormal*aNormal);vColor=aColor;gl_Position=uVP*w;}`;
+const fs=`precision highp float; varying vec3 vWorld; varying vec3 vN; varying vec3 vColor; uniform float uTex; uniform vec3 uEye; void main(){vec3 n=normalize(vN);if(!gl_FrontFacing)n=-n;vec3 l=normalize(vec3(-0.42,-0.55,0.72));vec3 v=normalize(uEye-vWorld);vec3 h=normalize(l+v);float dif=max(dot(n,l),0.0);float spec=pow(max(dot(n,h),0.0),mix(80.0,18.0,uTex))*mix(0.34,0.08,uTex);float grain=sin(vWorld.x*0.22+sin(vWorld.y*0.09))*0.012+sin(vWorld.z*0.34)*0.006;float speck=fract(sin(dot(floor(vWorld*0.65),vec3(12.9898,78.233,37.719)))*43758.5453);float pat=0.0;if(uTex<0.5){pat=grain;}else if(uTex<1.5){pat=grain*0.35+(speck-0.5)*0.018;}else if(uTex<2.5){pat=(speck-0.5)*0.035+sin(vWorld.x*0.65)*0.008;}else if(uTex<3.5){pat=(speck-0.5)*0.07;}else{pat=0.0;}vec3 base=max(vec3(0.0),vColor*(1.0+pat));float amb=0.36;float light=amb+0.64*dif;vec3 col=base*light+vec3(spec);float rim=pow(1.0-max(dot(n,v),0.0),3.0)*0.05;col+=rim*vec3(0.32,0.5,0.7);gl_FragColor=vec4(col,1.0);}`;
+function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s;}
+const prog=gl.createProgram();gl.attachShader(prog,shader(gl.VERTEX_SHADER,vs));gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog));gl.useProgram(prog);
+const loc={pos:gl.getAttribLocation(prog,'aPos'),normal:gl.getAttribLocation(prog,'aNormal'),color:gl.getAttribLocation(prog,'aColor'),model:gl.getUniformLocation(prog,'uModel'),vp:gl.getUniformLocation(prog,'uVP'),normalMat:gl.getUniformLocation(prog,'uNormal'),tex:gl.getUniformLocation(prog,'uTex'),eye:gl.getUniformLocation(prog,'uEye')};
+function rgb(hex){let h=hex.replace('#','');return [parseInt(h.slice(0,2),16)/255,parseInt(h.slice(2,4),16)/255,parseInt(h.slice(4,6),16)/255];}
+function meshFromTriangles(tris,color){const p=[],n=[],c=[];const col=Array.isArray(color)?color:rgb(color);for(let i=0;i<tris.length;i+=9){const ax=tris[i],ay=tris[i+1],az=tris[i+2],bx=tris[i+3],by=tris[i+4],bz=tris[i+5],cx=tris[i+6],cy=tris[i+7],cz=tris[i+8];let ux=bx-ax,uy=by-ay,uz=bz-az,vx=cx-ax,vy=cy-ay,vz=cz-az;let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;let ll=Math.hypot(nx,ny,nz)||1;nx/=ll;ny/=ll;nz/=ll;for(let j=0;j<3;j++){const k=i+j*3;p.push(tris[k],tris[k+1],tris[k+2]);n.push(nx,ny,nz);c.push(...col);}}const m={count:p.length/3};for(const [key,data] of [['p',p],['n',n],['c',c]]){m[key]=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,m[key]);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(data),gl.STATIC_DRAW);}return m;}
+function quad(t,a,b,c,d){t.push(...a,...b,...c,...a,...c,...d);}
+function cubeGeom(){let t=[];const v=[[-.5,-.5,-.5],[.5,-.5,-.5],[.5,.5,-.5],[-.5,.5,-.5],[-.5,-.5,.5],[.5,-.5,.5],[.5,.5,.5],[-.5,.5,.5]];quad(t,v[0],v[1],v[2],v[3]);quad(t,v[4],v[7],v[6],v[5]);quad(t,v[0],v[4],v[5],v[1]);quad(t,v[1],v[5],v[6],v[2]);quad(t,v[2],v[6],v[7],v[3]);quad(t,v[4],v[0],v[3],v[7]);return meshFromTriangles(t,'#ffffff');}
+function cylGeom(seg=40){let t=[];for(let i=0;i<seg;i++){let a=i*2*Math.PI/seg,b=(i+1)*2*Math.PI/seg;let p1=[Math.cos(a),Math.sin(a),-.5],p2=[Math.cos(b),Math.sin(b),-.5],p3=[Math.cos(b),Math.sin(b),.5],p4=[Math.cos(a),Math.sin(a),.5];quad(t,p1,p2,p3,p4);quad(t,[0,0,-.5],p2,p1,[0,0,-.5]);quad(t,[0,0,.5],p4,p3,[0,0,.5]);}return meshFromTriangles(t,'#ffffff');}
+function binGeom(){
+ // Parametric visual bin: body top length 670, bottom 655, overall rim length 725,
+ // width 420, height 230. Wall=4 mm and rim band=24 mm are placeholders/interpretation.
+ let t=[];const x=210,yb=327.5,yt=335,yLip=362.5,z0=-115,zBand=91,zTop=115,inner=4;
+ // Outer body walls: front/back short-end walls and left/right long-side walls
+ quad(t,[-x,-yb,z0],[x,-yb,z0],[x,-yt,zBand],[-x,-yt,zBand]);
+ quad(t,[-x,yb,z0],[-x,yt,zBand],[x,yt,zBand],[x,yb,z0]);
+ quad(t,[-x,-yb,z0],[-x,yb,z0],[-x,yt,zBand],[-x,-yt,zBand]);
+ quad(t,[x,-yb,z0],[x,-yt,zBand],[x,yt,zBand],[x,yb,z0]);
+ // Inner walls, offset by the placeholder 4 mm
+ quad(t,[-x+inner,-yb+inner,z0+inner],[-x+inner,-yt+inner,zBand],[x-inner,-yt+inner,zBand],[x-inner,-yb+inner,z0+inner]);
+ quad(t,[-x+inner,yb-inner,z0+inner],[x-inner,yb-inner,z0+inner],[x-inner,yt-inner,zBand],[-x+inner,yt-inner,zBand]);
+ quad(t,[-x+inner,-yb+inner,z0+inner],[-x+inner,yb-inner,z0+inner],[-x+inner,yt-inner,zBand],[-x+inner,-yt+inner,zBand]);
+ quad(t,[x-inner,-yb+inner,z0+inner],[x-inner,-yt+inner,zBand],[x-inner,yt-inner,zBand],[x-inner,yb-inner,z0+inner]);
+ // Bottom floor and visible inner floor
+ quad(t,[-x+inner,-yb+inner,z0+inner],[x-inner,-yb+inner,z0+inner],[x-inner,yb-inner,z0+inner],[-x+inner,yb-inner,z0+inner]);
+ // Rim band / flange: projecting 27.5 mm on the two long-axis ends to make overall length 725
+ quad(t,[-x,-yt,zTop],[x,-yt,zTop],[x,-yLip,zTop],[-x,-yLip,zTop]);
+ quad(t,[-x,yt,zTop],[-x,yLip,zTop],[x,yLip,zTop],[x,yt,zTop]);
+ // Vertical fascia below the projecting rim, 24 mm band thickness (interpretation to confirm)
+ quad(t,[-x,-yLip,zBand],[x,-yLip,zBand],[x,-yLip,zTop],[-x,-yLip,zTop]);
+ quad(t,[-x,yLip,zBand],[-x,yLip,zTop],[x,yLip,zTop],[x,yLip,zBand]);
+ // Side rim strips along the 420-mm width edges
+ quad(t,[-x,-yt,zTop],[-x,yt,zTop],[-x,yt,zBand],[-x,-yt,zBand]);
+ quad(t,[x,-yt,zTop],[x,-yt,zBand],[x,yt,zBand],[x,yt,zTop]);
+ return meshFromTriangles(t,'#ffffff');
+}
+const M={cube:cubeGeom(),cyl:cylGeom(),bin:binGeom()};
+function ident(){return new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]);}
+function mul(a,b){let o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++)o[c*4+r]=a[r]*b[c*4]+a[4+r]*b[c*4+1]+a[8+r]*b[c*4+2]+a[12+r]*b[c*4+3];return o;}
+function trans(x,y,z){let m=ident();m[12]=x;m[13]=y;m[14]=z;return m;}
+function rotX(a){let m=ident(),c=Math.cos(a),s=Math.sin(a);m[5]=c;m[6]=s;m[9]=-s;m[10]=c;return m;}
+function rotY(a){let m=ident(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[2]=-s;m[8]=s;m[10]=c;return m;}
+function rotZ(a){let m=ident(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[1]=s;m[4]=-s;m[5]=c;return m;}
+function scale(x,y,z){let m=ident();m[0]=x;m[5]=y;m[10]=z;return m;}
+function modelMat(x,y,z,rx,ry,rz,sx,sy,sz){let m=mul(trans(x,y,z),mul(rotZ(rz),mul(rotY(ry),mul(rotX(rx),scale(sx,sy,sz)))));return m;}
+function perspective(fovy,aspect,near,far){let f=1/Math.tan(fovy/2),nf=1/(near-far),o=new Float32Array(16);o[0]=f/aspect;o[5]=f;o[10]=(far+near)*nf;o[11]=-1;o[14]=2*far*near*nf;return o;}
+function lookAt(eye,center,up){let z=[eye[0]-center[0],eye[1]-center[1],eye[2]-center[2]];let zl=Math.hypot(...z);z=z.map(v=>v/zl);let x=[up[1]*z[2]-up[2]*z[1],up[2]*z[0]-up[0]*z[2],up[0]*z[1]-up[1]*z[0]];let xl=Math.hypot(...x);x=x.map(v=>v/xl);let y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-(x[0]*eye[0]+x[1]*eye[1]+x[2]*eye[2]),-(y[0]*eye[0]+y[1]*eye[1]+y[2]*eye[2]),-(z[0]*eye[0]+z[1]*eye[1]+z[2]*eye[2]),1]);}
+function normal3(m){return new Float32Array([m[0],m[1],m[2],m[4],m[5],m[6],m[8],m[9],m[10]]);}
+function draw(mesh,x,y,z,rx,ry,rz,sx,sy,sz,color,tex=0){let mm=modelMat(x,y,z,rx,ry,rz,sx,sy,sz);gl.uniformMatrix4fv(loc.model,false,mm);gl.uniformMatrix3fv(loc.normalMat,false,normal3(mm));gl.uniform1f(loc.tex,tex);const c=rgb(color);/* color is supplied by a cached material buffer */
+ gl.bindBuffer(gl.ARRAY_BUFFER,mesh.p);gl.enableVertexAttribArray(loc.pos);gl.vertexAttribPointer(loc.pos,3,gl.FLOAT,false,0,0);
+ gl.bindBuffer(gl.ARRAY_BUFFER,mesh.n);gl.enableVertexAttribArray(loc.normal);gl.vertexAttribPointer(loc.normal,3,gl.FLOAT,false,0,0);
+ // geometry colors are white; use a cached per-material buffer
+ const cb=getColorBuffer(mesh,c);gl.bindBuffer(gl.ARRAY_BUFFER,cb);gl.enableVertexAttribArray(loc.color);gl.vertexAttribPointer(loc.color,3,gl.FLOAT,false,0,0);
+ gl.drawArrays(gl.TRIANGLES,0,mesh.count);
+}
+const colorBuffers=new WeakMap();function getColorBuffer(mesh,c){let key=c.map(v=>Math.round(v*255)).join(',');let map=colorBuffers.get(mesh);if(!map){map=new Map();colorBuffers.set(mesh,map);}if(map.has(key))return map.get(key);let arr=new Float32Array(mesh.count*3);for(let i=0;i<arr.length;i+=3){arr[i]=c[0];arr[i+1]=c[1];arr[i+2]=c[2];}let b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,arr,gl.STATIC_DRAW);map.set(key,b);return b;}
+const C={steel:'#76889b',bright:'#b7c5d2',dark:'#35475c',yellow:'#e4a92e',yellow2:'#f4c44f',blue:'#1768bd',blue2:'#2c8be0',rubber:'#202a34',black:'#0d1520',pallet:'#b68b53',wood:'#c99a62',floor:'#18283b',screen:'#2b9cc4',green:'#35b987',red:'#c8464f',white:'#d9e4ee'};
+const state={mode:'AUTO',x:-800,z:1850,theta:180,jaw:1,boxHeld:false,inCount:5,outCount:0,moved:0,guard:true,pallet:true,estop:false,auto:false,paused:false,phase:0,stepT:0,stepFrom:null,stepName:'IDLE',jog:null,last:0};
+let az=-0.72,el=0.38,radius=4400,target=[0,0,1100],drag=null;
+const steps=[
+ {name:'Approach input box',dur:1.25,to:s=>({x:-800,z:inputCenter(),theta:180,jaw:1})},
+ {name:'Engage four hook points',dur:.8,to:s=>({jaw:0}),event:'pick'},
+ {name:'Lift clear of stack',dur:1.2,to:s=>({z:inputCenter()+330})},
+ {name:'Transfer A → B',dur:2.1,to:s=>({x:800})},
+ {name:'Rotate cradle 180°',dur:1.8,to:s=>({theta:0})},
+ {name:'Lower to output stack',dur:1.25,to:s=>({z:outputCenter()})},
+ {name:'Release box onto pallet',dur:.7,to:s=>({jaw:1}),event:'place'},
+ {name:'Raise clear',dur:1.15,to:s=>({z:Math.max(650,outputCenter()+360)})},
+ {name:'Return cradle to 180° home',dur:1.7,to:s=>({theta:180})},
+ {name:'Return B → A',dur:2.1,to:s=>({x:-800})}
+];
+function inputCenter(){return 145+(Math.max(1,state.inCount)-1)*230+115;}
+function outputCenter(){return 145+state.outCount*230+115;}
+function addLog(msg){const el=document.getElementById('log');const d=document.createElement('div');d.textContent='['+new Date().toLocaleTimeString()+'] '+msg;el.appendChild(d);el.scrollTop=el.scrollHeight;}
+function setStatus(s){state.stepName=s;document.getElementById('phaseChip').textContent=s.toUpperCase();document.getElementById('footerStatus').textContent=s.toUpperCase();}
+function updateUI(){document.getElementById('mx').textContent=Math.round(state.x).toLocaleString();document.getElementById('mz').textContent=Math.round(state.z).toLocaleString();document.getElementById('mr').textContent=Math.round(state.theta);document.getElementById('moved').textContent=state.moved;document.getElementById('xVal').textContent=Math.round(state.x)+' mm';document.getElementById('zVal').textContent=Math.round(state.z).toLocaleString()+' mm';document.getElementById('rVal').textContent=Math.round(state.theta)+'°';document.getElementById('gripVal').textContent=state.jaw<.4?'CLOSED':'OPEN';document.getElementById('inCount').textContent=state.inCount+' / 5 boxes';document.getElementById('outCount').textContent=state.outCount+' / 5 boxes';document.getElementById('guardState').textContent=state.guard?'YES':'OPEN';document.getElementById('guardState').className=state.guard?'ok':'bad';document.getElementById('estopState').textContent=state.estop?'ACTIVE':'RESET';document.getElementById('estopState').className=state.estop?'bad':'ok';document.getElementById('boxState').textContent=state.inCount>0?'DETECTED':'EMPTY';document.getElementById('boxState').className=state.inCount>0?'ok':'warn';document.getElementById('lockState').textContent=state.boxHeld?'LOCKED':(state.jaw<.4?'CLOSED':'OPEN');document.getElementById('lockState').className=state.boxHeld?'ok':'warn';document.getElementById('coordChip').textContent=`X ${Math.round(state.x)} | Z ${Math.round(state.z)} | R ${Math.round(state.theta)}°`;document.getElementById('startBtn').disabled=state.mode!=='AUTO'||state.auto||state.inCount===0||state.outCount>=5||state.estop||!state.guard||!state.pallet;document.getElementById('pauseBtn').disabled=!state.auto;document.getElementById('stopBtn').disabled=!state.auto;document.getElementById('manualPanel').style.display=state.mode==='MANUAL'?'block':'none';document.getElementById('modeHelp').textContent=state.mode==='AUTO'?'AUTO: pick → lift → transfer → rotate → place → return.':'MANUAL: gunakan jog X/Z/R dan hook gripper. Tahan tombol untuk gerak kontinu.';document.getElementById('autoMode').classList.toggle('active',state.mode==='AUTO');document.getElementById('manualMode').classList.toggle('active',state.mode==='MANUAL');}
+function setMode(m){if(state.auto){addLog('Mode change rejected while AUTO cycle is active.');return;}state.mode=m;state.jog=null;updateUI();addLog('Mode set to '+m+'.');}
+function startAuto(){if(state.estop||!state.guard||!state.pallet||state.inCount<=0||state.outCount>=5){addLog('START BLOCKED: safety / pallet / box precondition not met.');return;}if(state.boxHeld){addLog('START BLOCKED: box is already held; use manual recovery.');return;}state.mode='AUTO';state.auto=true;state.paused=false;state.phase=0;state.stepT=0;state.stepFrom=null;document.getElementById('progressBar').style.width='0%';setStatus('AUTO START');addLog('AUTO cycle started.');updateUI();}
+function stopAuto(){state.auto=false;state.paused=false;state.stepFrom=null;state.jog=null;setStatus('STOPPED');addLog('AUTO cycle stopped. Position retained; inspect and recover in MANUAL mode.');updateUI();}
+function resetAll(){state.auto=false;state.paused=false;state.jog=null;state.x=-800;state.z=1850;state.theta=180;state.jaw=1;state.boxHeld=false;state.inCount=5;state.outCount=0;state.moved=0;state.phase=0;state.stepT=0;state.stepFrom=null;state.estop=false;setStatus('READY');document.getElementById('progressBar').style.width='0%';document.getElementById('pauseBtn').textContent='Ⅱ PAUSE';document.getElementById('cycleProgress').textContent='0%';addLog('Simulation reset: 5 inverted boxes at A, output empty, X home, R=180°.');updateUI();}
+function nextStep(){const st=steps[state.phase];if(st.event==='pick'){if(state.inCount>0){state.inCount--;state.boxHeld=true;addLog('Box picked: hook points engaged; input stack decremented.');}else{stopAuto();return;}}if(st.event==='place'){if(state.boxHeld){state.boxHeld=false;state.outCount++;state.moved++;addLog('Box placed upright on output pallet B.');}}
+ state.phase++;state.stepT=0;state.stepFrom=null;if(state.phase>=steps.length){state.phase=0;if(state.inCount>0&&state.outCount<5){addLog('Cycle complete. Starting next box automatically.');}else{state.auto=false;setStatus('AUTO COMPLETE');document.getElementById('progressBar').style.width='100%';addLog('AUTO JOB COMPLETE. Input stack processed or output pallet full.');}}else setStatus(steps[state.phase].name);updateUI();}
+function updateAuto(dt){if(!state.auto||state.paused||state.estop||!state.guard)return;let st=steps[state.phase];if(!st)return;if(!state.stepFrom){state.stepFrom={x:state.x,z:state.z,theta:state.theta,jaw:state.jaw};setStatus(st.name);}
+ state.stepT+=dt;let p=Math.min(1,state.stepT/st.dur),e=p*p*(3-2*p),to=st.to(state);for(const k of Object.keys(to)){state[k]=state.stepFrom[k]+(to[k]-state.stepFrom[k])*e;}
+ const pct=((state.phase+p)/steps.length)*100;document.getElementById('progressBar').style.width=pct+'%';document.getElementById('cycleProgress').textContent=Math.round(pct)+'%';if(p>=1)nextStep();}
+function manualAction(action){if(state.mode!=='MANUAL'||state.auto)return;if(state.estop||!state.guard){addLog('MANUAL MOVE BLOCKED: E-stop or guard interlock.');return;}if(action==='close'){if(state.boxHeld){addLog('Box already held.');return;}if(Math.abs(state.x+800)<120&&Math.abs(state.z-inputCenter())<150&&state.theta>145&&state.inCount>0){state.jaw=0;state.inCount--;state.boxHeld=true;addLog('MANUAL PICK: hooks closed and box attached.');}else{state.jaw=0;addLog('Hooks closed, but no box captured: position / height / orientation not in pickup window.');}}
+ if(action==='open'){state.jaw=1;if(state.boxHeld&&state.pallet&&state.outCount<5&&Math.abs(state.x-800)<130&&state.theta<25&&Math.abs(state.z-outputCenter())<160){state.boxHeld=false;state.outCount=Math.min(5,state.outCount+1);state.moved++;addLog('MANUAL PLACE: box released on output pallet.');}else if(state.boxHeld){addLog('WARNING: grip opened while box not over output. Box detached in simulator; verify safe support.');state.boxHeld=false;}else addLog('Hooks opened.');}
+ if(action==='input'){state.x=-800;state.theta=180;state.z=state.inCount>0?inputCenter():1850;}
+ if(action==='output'){state.x=800;state.theta=0;state.z=outputCenter();}
+ if(action==='safe'){state.z=1850;}
+ if(action==='rhome'){state.theta=180;}
+ updateUI();}
+let jogSpeed={x:500,z:260,r:65};function updateJog(dt){if(state.mode!=='MANUAL'||!state.jog||state.estop||!state.guard)return;const d=jogSpeed;switch(state.jog){case'x-':state.x-=d.x*dt;break;case'x+':state.x+=d.x*dt;break;case'z+':state.z+=d.z*dt;break;case'z-':state.z-=d.z*dt;break;case'r-':if(state.boxHeld)state.theta-=d.r*dt;break;case'r+':if(state.boxHeld)state.theta+=d.r*dt;break;}state.x=Math.max(-1150,Math.min(1150,state.x));state.z=Math.max(250,Math.min(2100,state.z));state.theta=Math.max(0,Math.min(180,state.theta));}
+// scene helpers
+function b(x,y,z,w,h,d,col=C.steel,rx=0,ry=0,rz=0,tex=0){draw(M.cube,x,y,z,rx,ry,rz,w,h,d,col,tex);}function cz(x,y,z,r,len,col=C.steel,rx=0,ry=0,rz=0,tex=0){draw(M.cyl,x,y,z,rx,ry,rz,r*2,r*2,len,col,tex);}function localB(x,y,z,w,h,d,col,theta,pivot,rx=0,ry=0,rz=0,tex=0){let c=Math.cos(theta),s=Math.sin(theta);let wx=pivot.x+c*x+s*z,wz=pivot.z-s*x+c*z;draw(M.cube,wx,pivot.y+y,wz,rx,theta+ry,rz,w,h,d,col,tex);}function localC(x,y,z,r,len,col,theta,pivot,rx=0,ry=0,rz=0,tex=0){let c=Math.cos(theta),s=Math.sin(theta);let wx=pivot.x+c*x+s*z,wz=pivot.z-s*x+c*z;draw(M.cyl,wx,pivot.y+y,wz,rx,theta+ry,rz,r*2,r*2,len,col,tex);}
+function beamX(x,y,z,len,thick,col=C.steel){b(x,y,z,len,thick,thick,col,0,0,0,0);}function beamY(x,y,z,len,thick,col=C.steel){b(x,y,z,thick,len,thick,col,0,0,0,0);}function beamZ(x,y,z,len,thick,col=C.steel){b(x,y,z,thick,thick,len,col,0,0,0,0);}
+function drawPallet(cx,cy,boxCount,upright){const px=1000,py=1200,top=145;b(cx,cy,45,px,py,90,C.pallet,0,0,0,1);for(let i=-2;i<=2;i++){b(cx+i*225,cy,top-8,90,py-30,16,C.wood,0,0,0,1);}for(let x of [-360,0,360]){b(cx+x,cy,18,120,py-50,36,'#8b6946');}for(let i=0;i<boxCount;i++){let z=top+115+i*230;draw(M.bin,cx,cy,z,upright?0:0, (upright?0:Math.PI),0,1,1,1,C.blue,2);}}
+function drawFrame(){// base skid and uprights
+for(let y of [-900,900])beamX(0,y,70,3000,100,C.dark);for(let x of [-1450,1450])beamY(x,0,70,1900,100,C.dark);
+for(let x of [-1450,1450])for(let y of [-900,900]){beamZ(x,y,1325,2650,100,C.steel);b(x,y,50,180,180,100,C.dark);b(x,y,110,125,125,20,C.yellow,0,0,0,1);}
+// top perimeter and cross ties
+for(let y of [-900,900])beamX(0,y,2700,3000,100,C.steel);for(let x of [-1450,1450])beamY(x,0,2700,1900,100,C.steel);for(let x of [-950,0,950])beamY(x,0,2640,1450,70,C.dark);
+// X rails at both sides of travel
+for(let y of [-700,700]){beamX(0,y,2505,2700,95,C.dark);beamX(0,y,2560,2700,30,C.bright);for(let x=-1200;x<=1200;x+=150){b(x,y,2518,8,110,9,C.bright);}}
+// side and rear safety mesh fence frame with cross-grid (rear and side panels)
+for(let x of [-1400,1400]){for(let y of [-820,820])beamZ(x,y,1250,2300,55,C.yellow);beamY(x,0,1250,1650,45,C.yellow);for(let z=250;z<2400;z+=100)beamY(x,0,z,1600,8,C.bright);for(let y=-780;y<=780;y+=100)beamZ(x,y,1250,2200,7,C.bright);}
+// rear fence behind pallet bays
+for(let x=-1350;x<=1350;x+=250)beamZ(x,-885,1150,2100,9,C.bright);for(let z=250;z<2300;z+=100)beamX(0,-885,z,2750,8,C.bright);beamX(0,-885,2300,2800,45,C.yellow);
+// warning striped feet / lower safety rails
+for(let x of [-1450,1450])for(let y of [-900,900])b(x,y,155,180,180,24,C.yellow,0,0,0,1);
+}
+function drawGantry(){const x=state.x; // bridge travelling across X
+// two bogies on parallel overhead rails
+for(let y of [-700,700]){b(x,y,2500,260,170,85,C.dark);b(x,y,2548,180,130,16,C.bright);for(let yy of [-45,45])cz(x,y+yy,2480,34,50,C.black,Math.PI/2,0,0,0);}
+beamY(x,0,2440,1420,120,C.steel);beamY(x,0,2508,1420,28,C.yellow);b(x,0,2385,440,300,85,C.dark);b(x,0,2385,360,230,26,C.steel);
+// Z rails and moving lift plate
+for(let xx of [-125,125]){beamZ(x+xx,0,1325,2150,34,C.dark);beamZ(x+xx,0,1325,2110,16,C.bright);}
+const stageZ=state.z+310;b(x,0,stageZ,430,100,62,C.yellow,0,0,0,1);b(x,0,stageZ+48,340,80,18,C.dark);for(let xx of [-125,125]){b(x+xx,0,stageZ,62,100,120,C.blue,0,0,0,1);}
+for(let y of [-520,520]){beamZ(x,y,(stageZ+state.z)/2,stageZ-state.z,48,C.steel);b(x,y,state.z+25,110,100,80,C.dark);}
+// Z-axis screw and upper drive placeholder
+cz(x+195,0,1325,22,2150,C.bright);b(x+195,0,2440,140,150,130,C.blue,0,0,0,1);cz(x+195,0,2365,42,60,C.dark);
+}
+function drawCradle(){const p={x:state.x,y:0,z:state.z},t=state.theta*Math.PI/180;
+// Rotary cage: 600 mm nominal internal square envelope around the 420 x 230 mm box sweep.
+// Outer hoops at both ends; the 180-degree rotation is about the box long axis (world Y).
+for(let y of [-440,440]){
+ localB(-335,y,0,42,62,670,C.yellow,t,p); localB(335,y,0,42,62,670,C.yellow,t,p);
+ localB(0,y,335,670,62,42,C.yellow,t,p); localB(0,y,-335,670,62,42,C.yellow,t,p);
+}
+for(let xx of [-335,335])for(let zz of [-335,335])localB(xx,0,zz,42,880,42,C.steel,t,p);
+// Internal longitudinal retainers; they travel with the cradle and keep the box captured.
+for(let xx of [-232,232]){localB(xx,0,0,24,730,220,C.rubber,t,p);for(let y of [-300,300])localB(xx,y,0,40,80,250,C.dark,t,p);}
+// Four hook points under the end lips. Jaw bars slide along local Y.
+const open=state.jaw;for(let side of [-1,1]){
+ let yy=side*(390+open*38);localB(0,yy,108,445,42,48,C.dark,t,p);localB(0,yy,136,405,16,10,C.bright,t,p);
+ // two hooks on each bar: vertical shank + toe under rim + rubber contact strip
+ for(let xx of [-140,140]){
+  localB(xx,side*(yy*side-15),78,34,30,76,C.steel,t,p);
+  localB(xx,side*(yy*side-30),104,46,42,14,C.yellow,t,p);
+  localB(xx,side*(yy*side-30),113,48,34,6,C.rubber,t,p,0,0,0,3);
+ }
+ // small pneumatic actuator cartridges for the sliding jaw bars (visual placeholders)
+ localC(0,side*(yy*side+52),108,22,105,C.black,t,p,Math.PI/2,0,0);
+}
+// Rotary shaft lies on Y axis. Bearings and motor housing are stationary relative to Z carriage.
+cz(p.x,0,p.z,38,1200,C.dark,Math.PI/2,0,0);
+for(let y of [-520,520]){
+ b(p.x,y,p.z,150,145,150,C.dark,0,0,0,1);
+ cz(p.x,y,p.z,76,72,C.steel,Math.PI/2,0,0);
+ cz(p.x,y,p.z,42,90,C.black,Math.PI/2,0,0);
+}
+// Geared motor + reducer on the rear bearing pedestal, fixed while cradle rotates.
+ b(p.x,-690,p.z+12,200,210,190,C.blue,0,0,0,1);
+ cz(p.x,-575,p.z+12,48,90,C.dark,Math.PI/2,0,0);
+ b(p.x,-830,p.z+12,210,185,180,C.dark,0,0,0,1);
+ cz(p.x,-735,p.z+12,58,100,C.steel,Math.PI/2,0,0);
+ cz(p.x,-575,p.z+12,36,38,C.yellow,Math.PI/2,0,0);
+// Box is displayed only after successful pick; its mouth is down at 180°, up at 0°.
+if(state.boxHeld){draw(M.bin,p.x,p.y,p.z,0,t,0,1,1,1,C.blue,2);}
+}
+function drawControlCabinet(){// left-front standalone control cabinet
+b(-1690,350,700,330,300,1200,C.dark,0,0,0,1);b(-1690,185,890,260,22,260,C.steel);b(-1690,171,900,220,8,190,C.black);b(-1690,164,900,180,5,145,C.screen,0,0,0,1);for(let x of [-1770,-1690,-1610]){cz(x,160,690,17,16,x===-1690?C.green:C.red,Math.PI/2,0,0);}b(-1690,180,520,90,8,65,C.yellow);}
+function drawPallets(){drawPallet(-800,0,state.inCount,false);drawPallet(800,0,state.outCount,true);}
+function drawFloor(){b(0,0,-35,3400,2300,70,'#142235',0,0,0,4);for(let x=-1600;x<=1600;x+=200) b(x,0,1,2,2200,2,'#30445b');for(let y=-1000;y<=1000;y+=200)b(0,y,1,3400,2,2,'#30445b');}
+function drawMachine(){drawFloor();drawFrame();drawPallets();drawGantry();drawCradle();drawControlCabinet();
+// status stack / station markers on floor
+for(let x of [-800,800]){b(x,0,4,1120,1320,3,x<0?'#b78127':'#208e69',0,0,0,1);}
+// red/yellow emergency stops at cabinet top
+cz(-1690,120,1320,26,28,C.red,0,0,0,1);cz(-1610,120,1320,26,28,C.yellow,0,0,0,1);
+}
+function render(){let w=canvas.clientWidth,h=canvas.clientHeight,dpr=Math.min(window.devicePixelRatio||1,2);let W=Math.max(2,Math.floor(w*dpr)),H=Math.max(2,Math.floor(h*dpr));if(canvas.width!==W||canvas.height!==H){canvas.width=W;canvas.height=H;}gl.viewport(0,0,W,H);gl.clearColor(.035,.065,.11,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);gl.useProgram(prog);
+const ex=target[0]+radius*Math.cos(el)*Math.sin(az),ey=target[1]+radius*Math.cos(el)*Math.cos(az),ez=target[2]+radius*Math.sin(el);const vp=mul(perspective(45*Math.PI/180,W/H,10,15000),lookAt([ex,ey,ez],target,[0,0,1]));gl.uniformMatrix4fv(loc.vp,false,vp);gl.uniform3f(loc.eye,ex,ey,ez);drawMachine();}
+function frame(ts){let dt=state.last?Math.min(.05,(ts-state.last)/1000):0;state.last=ts;if(state.auto)updateAuto(dt);if(state.mode==='MANUAL')updateJog(dt);updateUI();render();requestAnimationFrame(frame);}requestAnimationFrame(frame);
+// view controls
+canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,az,el,target:target.slice(),button:e.button};canvas.setPointerCapture(e.pointerId);});canvas.addEventListener('pointermove',e=>{if(!drag)return;let dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(drag.button===2){const pan=radius*.0012;target[0]-=dx*pan*Math.cos(az)-dy*pan*Math.sin(az);target[1]+=dx*pan*Math.sin(az)+dy*pan*Math.cos(az);target[2]+=dy*pan;}else{az=drag.az-dx*.006;el=Math.max(-.05,Math.min(1.35,drag.el+dy*.005));}});canvas.addEventListener('pointerup',()=>drag=null);canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('wheel',e=>{radius=Math.max(2000,Math.min(8000,radius*Math.exp(e.deltaY*.001)));e.preventDefault();},{passive:false});canvas.addEventListener('dblclick',()=>{az=-.72;el=.38;radius=4400;target=[0,0,1100];});function preset(a,e,r,t){az=a;el=e;radius=r;target=t||[0,0,1100];}document.getElementById('viewIso').onclick=()=>preset(-.72,.38,4400);document.getElementById('viewTop').onclick=()=>preset(-.72,1.35,3900,[0,0,800]);document.getElementById('viewFront').onclick=()=>preset(0,.12,4400,[0,0,1250]);document.getElementById('fitView').onclick=()=>preset(-.72,.38,4400,[0,0,1100]);
+// UI events
+document.getElementById('autoMode').onclick=()=>setMode('AUTO');document.getElementById('manualMode').onclick=()=>setMode('MANUAL');document.getElementById('startBtn').onclick=startAuto;document.getElementById('pauseBtn').onclick=()=>{if(!state.auto)return;state.paused=!state.paused;document.getElementById('pauseBtn').textContent=state.paused?'▶ RESUME':'Ⅱ PAUSE';addLog(state.paused?'AUTO paused.':'AUTO resumed.');};document.getElementById('stopBtn').onclick=stopAuto;document.getElementById('resetBtn').onclick=resetAll;
+document.getElementById('guardCheck').onchange=e=>{state.guard=e.target.checked;addLog('Guard interlock '+(state.guard?'closed':'OPEN')+'.');if(!state.guard&&state.auto){state.paused=true;addLog('AUTO paused: guard open.');}updateUI();};document.getElementById('palletCheck').onchange=e=>{state.pallet=e.target.checked;addLog('Output pallet presence '+(state.pallet?'OK':'MISSING')+'.');updateUI();};document.getElementById('estopBtn').onclick=()=>{state.estop=!state.estop;if(state.estop){state.auto=false;state.paused=false;state.jog=null;setStatus('E-STOP ACTIVE');addLog('EMERGENCY STOP simulated. Motion disabled.');}else{setStatus('E-STOP RESET');addLog('E-stop reset in simulator. Inspect machine before restart.');}updateUI();};
+document.getElementById('gripClose').onclick=()=>manualAction('close');document.getElementById('gripOpen').onclick=()=>manualAction('open');document.getElementById('goInput').onclick=()=>manualAction('input');document.getElementById('goOutput').onclick=()=>manualAction('output');document.getElementById('zSafe').onclick=()=>manualAction('safe');document.getElementById('rHome').onclick=()=>manualAction('rhome');document.getElementById('xHome').onclick=()=>manualAction('input');
+document.querySelectorAll('[data-jog]').forEach(btn=>{const start=e=>{e.preventDefault();if(state.mode!=='MANUAL'||state.estop||!state.guard)return;state.jog=btn.dataset.jog;};const end=()=>{if(state.jog===btn.dataset.jog)state.jog=null;};btn.addEventListener('pointerdown',start);window.addEventListener('pointerup',end);btn.addEventListener('pointerleave',end);});
+document.getElementById('openDesign').onclick=()=>document.getElementById('modalBack').style.display='flex';document.getElementById('closeModal').onclick=()=>document.getElementById('modalBack').style.display='none';document.getElementById('modalBack').onclick=e=>{if(e.target.id==='modalBack')e.currentTarget.style.display='none';};document.getElementById('clearLog').onclick=()=>document.getElementById('log').innerHTML='';document.getElementById('exportLog').onclick=()=>{const txt=[...document.getElementById('log').children].map(x=>x.textContent).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download='box_turner_simulation_log.txt';a.click();URL.revokeObjectURL(a.href);};
+updateUI();setStatus('READY');
+})();
+</script>
+</body>
+</html>
